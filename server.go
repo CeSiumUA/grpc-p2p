@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"log"
 	"net"
 )
@@ -21,5 +22,10 @@ func Serve() {
 		HandleError(err)
 		log.Println("remote client connected", conn.RemoteAddr().String())
 		clientsConnections = append(clientsConnections, conn.RemoteAddr())
+		oneByte := make([]byte, 1)
+		_, readErr := conn.Read(oneByte)
+		if readErr == io.EOF {
+			log.Println("client disconnected")
+		}
 	}
 }
