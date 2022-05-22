@@ -40,6 +40,7 @@ func StartP2P() {
 			log.Println("error closing connection")
 		}
 		listener, err := reuseport.Listen("tcp4", addressToListen)
+		HandleError(err)
 		go func(lstnr *net.Listener) {
 			for {
 				connectedPeer, err := (*lstnr).Accept()
@@ -50,7 +51,6 @@ func StartP2P() {
 				log.Println("new client peer connected", connectedPeer.RemoteAddr().String())
 			}
 		}(&listener)
-		HandleError(err)
 		fmt.Println("started listener on", listener.Addr().String())
 		peerConnection, err := reuseport.Dial("tcp", listener.Addr().String(), addresses[0])
 		if err != nil {
