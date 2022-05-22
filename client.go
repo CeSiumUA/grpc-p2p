@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/libp2p/go-reuseport"
 	"log"
 	"net"
 	"strings"
@@ -38,7 +39,7 @@ func StartP2P() {
 		if err != nil {
 			log.Println("error closing connection")
 		}
-		listener, err := net.Listen("tcp4", addressToListen)
+		listener, err := reuseport.Listen("tcp4", addressToListen)
 		go func(lstnr *net.Listener) {
 			for {
 				connectedPeer, err := (*lstnr).Accept()
@@ -51,7 +52,7 @@ func StartP2P() {
 		}(&listener)
 		HandleError(err)
 		fmt.Println("started listener on", listener.Addr().String())
-		peerConnection, err := net.Dial("tcp", addresses[0])
+		peerConnection, err := reuseport.Dial("tcp", listener.Addr().String(), addresses[0])
 		if err != nil {
 			log.Println("error connecting to peer", err)
 			return
