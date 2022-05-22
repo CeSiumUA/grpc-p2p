@@ -8,9 +8,6 @@ import (
 )
 
 func StartP2P() {
-	listener, err := net.Listen("tcp4", ":4566")
-	HandleError(err)
-	fmt.Println("started listener on", listener.Addr().String())
 	laddr, err := net.ResolveTCPAddr("tcp4", ":4566")
 	HandleError(err)
 	raddr, err := net.ResolveTCPAddr("tcp4", "5.189.145.4:16574")
