@@ -15,9 +15,11 @@ func StartP2P() {
 	conn, err := net.DialTCP("tcp4", laddr, raddr)
 	defer func(conn *net.TCPConn) {
 		log.Println("closing connection...")
-		err := conn.Close()
-		if err != nil {
-			HandleError(err)
+		if conn != nil {
+			err := conn.Close()
+			if err != nil {
+				HandleError(err)
+			}
 		}
 	}(conn)
 	HandleError(err)
