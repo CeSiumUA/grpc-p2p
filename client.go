@@ -8,20 +8,16 @@ import (
 )
 
 func StartP2P() {
-	laddr, err := net.ResolveTCPAddr("tcp4", ":4566")
-	HandleError(err)
-	raddr, err := net.ResolveTCPAddr("tcp4", "5.189.145.4:16574")
-	HandleError(err)
-	conn, err := net.DialTCP("tcp4", laddr, raddr)
-	defer func(conn *net.TCPConn) {
+	conn, err := net.Dial("tcp4", "5.189.145.4:16574")
+	defer func(conn *net.Conn) {
 		log.Println("closing connection...")
 		if conn != nil {
-			err := conn.Close()
+			err := (*conn).Close()
 			if err != nil {
 				HandleError(err)
 			}
 		}
-	}(conn)
+	}(&conn)
 	HandleError(err)
 	log.Println("client connected, local:", conn.LocalAddr(), "remote:", conn.RemoteAddr())
 	for {
@@ -37,5 +33,30 @@ func StartP2P() {
 		str := string(readBytes[:readBytesCount])
 		addresses := strings.Split(str, ",")
 		log.Println("got addresses from server:", addresses)
+		addressToListen := ":" + strings.Split(conn.LocalAddr().String(), ":")[1]
+		err = conn.Close()
+		if err != nil {
+			log.Println("error closing connection")
+		}
+		listener, err := net.Listen("tcp4", addressToListen)
+		go func(lstnr *net.Listener) {
+			for {
+				connectedPeer, err := (*lstnr).Accept()
+				if err != nil {
+					log.Println("error getting new connection", err)
+					continue
+				}
+				log.Println("new client peer connected", connectedPeer.RemoteAddr().String())
+			}
+		}(&listener)
+		HandleError(err)
+		fmt.Println("started listener on", listener.Addr().String())
+		peerConnection, err := net.Dial("tcp", addresses[0])
+		if err != nil {
+			log.Println("error connecting to peer", err)
+			return
+		}
+		fmt.Println("connected to peer successfully", peerConnection.RemoteAddr().String())
+		break
 	}
 }
