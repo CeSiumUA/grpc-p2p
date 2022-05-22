@@ -31,7 +31,7 @@ func StartP2P() {
 	str := string(readBytes[:readBytesCount])
 	addresses := strings.Split(str, ",")
 	log.Println("got addresses from server:", addresses)
-	addressToListen := ":" + strings.Split(conn.LocalAddr().String(), ":")[1]
+	addressToListen := conn.LocalAddr().String()
 	err = conn.Close()
 	if err != nil {
 		log.Println("error closing connection")
