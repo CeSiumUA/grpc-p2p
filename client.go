@@ -9,7 +9,7 @@ import (
 )
 
 func StartP2P() {
-	conn, err := net.Dial("tcp4", "5.189.145.4:16574")
+	conn, err := net.Dial("tcp", "5.189.145.4:16574")
 	defer func(conn *net.Conn) {
 		log.Println("closing connection...")
 		if conn != nil {
@@ -36,7 +36,7 @@ func StartP2P() {
 	if err != nil {
 		log.Println("error closing connection")
 	}
-	listener, err := reuseport.Listen("tcp4", addressToListen)
+	listener, err := reuseport.Listen("tcp", addressToListen)
 	HandleError(err)
 	go func(lstnr *net.Listener) {
 		for {
