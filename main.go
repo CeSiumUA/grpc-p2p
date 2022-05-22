@@ -1,8 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"os"
+)
 
 func main() {
-	fmt.Println("enter mode: s - server, c - client")
-	choise := 
+	args := os.Args[1:]
+
+	if args[0] == "c" {
+		log.Println("starting client...")
+		StartP2P()
+	} else if args[0] == "s" {
+		log.Println("starting server...")
+		Serve()
+	}
+	log.Println("node work finished")
 }
