@@ -37,10 +37,11 @@ func Serve() {
 			clientsConnections = append(clientsConnections, &conn)
 			notifyAllClients()
 			oneByte := make([]byte, 1)
-			_, readErr := conn.Read(oneByte)
+			readBytesCount, readErr := conn.Read(oneByte)
 			if readErr == io.EOF {
 				log.Println("client", conn.RemoteAddr(), "disconnected")
 			}
+			log.Println("got", readBytesCount, "bytes from connection")
 		}()
 	}
 }
