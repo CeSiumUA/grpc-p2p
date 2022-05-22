@@ -12,4 +12,4 @@ RUN go build -o /nodeapp
 
 EXPOSE 16574
 
-CMD [ "/nodeapp", "c" ]
+CMD [ "/nodeapp", "s" ]
