@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"strings"
+	"time"
 )
 
 func StartP2P() {
@@ -54,6 +55,7 @@ func StartP2P() {
 		}
 	}(&listener)
 	fmt.Println("started listener on", listener.Addr().String())
+	time.Sleep(time.Second)
 	peerConnection, err := reuseport.Dial("tcp", listener.Addr().String(), addresses[0])
 	if err != nil {
 		log.Println("error connecting to peer", err)
