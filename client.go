@@ -6,7 +6,6 @@ import (
 	"log"
 	"net"
 	"strings"
-	"time"
 )
 
 func StartP2P() {
@@ -70,7 +69,6 @@ func StartP2P() {
 		}
 
 	}()
-	time.Sleep(10 * time.Millisecond)
 	log.Println("trying to dial to", addresses[0], "from:", addressToCallFrom)
 	peerConnection, err := reuseport.Dial("tcp", addressToCallFrom, addresses[0])
 	if err != nil {
