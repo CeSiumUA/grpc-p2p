@@ -49,20 +49,20 @@ func StartP2P() {
 		log.Println("started listener on", listener.Addr().String())
 		defer func(lstnr *net.Listener) {
 			if listener != nil {
+				log.Println("closing listener")
 				err = listener.Close()
 				if err != nil {
 					log.Fatalln(err)
 				}
 			}
 		}(&listener)
-		for {
-			connectedPeer, err := listener.Accept()
-			if err != nil {
-				log.Println("error getting new connection", err)
-				continue
-			}
-			log.Println("new client peer connected", connectedPeer.RemoteAddr().String())
+
+		connectedPeer, err := listener.Accept()
+		if err != nil {
+			log.Println("error getting new connection", err)
 		}
+		log.Println("new client peer connected", connectedPeer.RemoteAddr().String())
+
 	}()
 	peerConnection, err := reuseport.Dial("tcp", addressToListen, addresses[0])
 	if err != nil {
