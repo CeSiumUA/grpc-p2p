@@ -11,7 +11,9 @@ var clientsConnections []*net.Conn = make([]*net.Conn, 0)
 
 func Serve() {
 	serverListener, err := net.Listen("tcp4", ":16574")
-	HandleError(err)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	defer func(serverListener net.Listener) {
 		err := serverListener.Close()
 		if err != nil {

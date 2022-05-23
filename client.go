@@ -15,11 +15,13 @@ func StartP2P() {
 		if conn != nil {
 			err := (*conn).Close()
 			if err != nil {
-				HandleError(err)
+				log.Fatalln(err)
 			}
 		}
 	}(&conn)
-	HandleError(err)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	log.Println("client connected, local:", conn.LocalAddr(), "remote:", conn.RemoteAddr())
 
 	readBytes := make([]byte, 2048)
@@ -31,13 +33,16 @@ func StartP2P() {
 	str := string(readBytes[:readBytesCount])
 	addresses := strings.Split(str, ",")
 	log.Println("got addresses from server:", addresses)
-	addressToListen := conn.LocalAddr().String()
+	addressToListen := "0.0.0.0:" + strings.Split(conn.LocalAddr().String(), ":")[1]
 	err = conn.Close()
 	if err != nil {
 		log.Println("error closing connection")
 	}
+	log.Println("starting listener:", addressToListen)
 	listener, err := reuseport.Listen("tcp", addressToListen)
-	HandleError(err)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	go func(lstnr *net.Listener) {
 		for {
 			connectedPeer, err := (*lstnr).Accept()
