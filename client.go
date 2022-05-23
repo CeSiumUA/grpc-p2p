@@ -40,23 +40,25 @@ func StartP2P() {
 		log.Println("error closing connection")
 	}
 
-	go func() {
-		log.Println("starting listener:", addressToListenString)
-		listener, err := reuseport.Listen("tcp", addressToListenString)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		log.Println("started listener on", listener.Addr().String())
-		defer func(lstnr *net.Listener) {
-			if listener != nil {
-				log.Println("closing listener")
-				err = listener.Close()
-				if err != nil {
-					log.Fatalln(err)
-				}
-			}
-		}(&listener)
+	log.Println("starting listener:", addressToListenString)
+	listener, err := reuseport.Listen("tcp", addressToListenString)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
+	log.Println("started listener on", listener.Addr().String())
+	defer func(lstnr *net.Listener) {
+		if listener != nil {
+			log.Println("closing listener")
+			err = listener.Close()
+			if err != nil {
+				log.Fatalln(err)
+			}
+		}
+	}(&listener)
+	go func() {
+
+		log.Println("waiting for clients to accept...")
 		connectedPeer, err := listener.Accept()
 		if err != nil {
 			log.Println("error getting new connection", err)
