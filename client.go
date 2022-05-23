@@ -36,6 +36,7 @@ func StartP2P() {
 	log.Println("got addresses from server:", addresses)
 	addressToCallFrom := conn.LocalAddr().String()
 	addressToListenString := ":" + strings.Split(conn.LocalAddr().String(), ":")[1]
+	log.Println("closing node connection")
 	err = conn.Close()
 	if err != nil {
 		log.Println("error closing connection")
@@ -69,7 +70,7 @@ func StartP2P() {
 		}
 
 	}()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	log.Println("trying to dial to", addresses[0], "from:", addressToCallFrom)
 	peerConnection, err := reuseport.Dial("tcp", addressToCallFrom, addresses[0])
 	if err != nil {
