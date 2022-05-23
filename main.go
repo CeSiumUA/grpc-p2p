@@ -8,7 +8,7 @@ import (
 func main() {
 	args := os.Args[1:]
 
-	if args[0] == "c" {
+	if len(args) == 0 || args[0] == "c" {
 		log.Println("starting client...")
 		StartP2P()
 	} else if args[0] == "s" {
