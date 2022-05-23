@@ -45,6 +45,7 @@ func Serve() {
 				for i, v := range clientsConnections {
 					if v == &conn {
 						clientsConnections = append(clientsConnections[:i], clientsConnections[i+1:]...)
+						log.Println("current clients stored:", len(clientsConnections))
 					}
 				}
 			}
