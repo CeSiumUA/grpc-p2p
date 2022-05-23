@@ -33,7 +33,6 @@ func StartP2P() {
 	str := string(readBytes[:readBytesCount])
 	addresses := strings.Split(str, ",")
 	log.Println("got addresses from server:", addresses)
-	addressToListen := conn.LocalAddr().String()
 	addressToListenString := ":" + strings.Split(conn.LocalAddr().String(), ":")[1]
 	//err = conn.Close()
 	//if err != nil {
@@ -64,7 +63,7 @@ func StartP2P() {
 		log.Println("new client peer connected", connectedPeer.RemoteAddr().String())
 
 	}()
-	peerConnection, err := reuseport.Dial("tcp", addressToListen, addresses[0])
+	peerConnection, err := reuseport.Dial("tcp", addressToListenString, addresses[0])
 	if err != nil {
 		log.Println("error connecting to peer", err)
 		return
