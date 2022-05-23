@@ -44,15 +44,15 @@ func StartP2P() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	defer func(lstnr *net.Listener) {
-		if listener != nil {
-			err = listener.Close()
-			if err != nil {
-				log.Fatalln(err)
-			}
-		}
-	}(&listener)
 	go func(lstnr *net.Listener) {
+		defer func(lstnr *net.Listener) {
+			if listener != nil {
+				err = listener.Close()
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}
+		}(lstnr)
 		for {
 			connectedPeer, err := (*lstnr).Accept()
 			if err != nil {
