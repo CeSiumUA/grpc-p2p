@@ -35,10 +35,10 @@ func StartP2P() {
 	log.Println("got addresses from server:", addresses)
 	addressToListen := conn.LocalAddr().String()
 	addressToListenString := ":" + strings.Split(conn.LocalAddr().String(), ":")[1]
-	err = conn.Close()
-	if err != nil {
-		log.Println("error closing connection")
-	}
+	//err = conn.Close()
+	//if err != nil {
+	//	log.Println("error closing connection")
+	//}
 
 	go func() {
 		log.Println("starting listener:", addressToListenString)
