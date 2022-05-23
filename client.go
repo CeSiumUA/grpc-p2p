@@ -6,7 +6,6 @@ import (
 	"log"
 	"net"
 	"strings"
-	"time"
 )
 
 func StartP2P() {
@@ -34,17 +33,20 @@ func StartP2P() {
 	str := string(readBytes[:readBytesCount])
 	addresses := strings.Split(str, ",")
 	log.Println("got addresses from server:", addresses)
-	addressToListen := ":" + strings.Split(conn.LocalAddr().String(), ":")[1]
+	addressToListen := conn.LocalAddr().String()
+	addressToListenString := ":" + strings.Split(conn.LocalAddr().String(), ":")[1]
 	err = conn.Close()
 	if err != nil {
 		log.Println("error closing connection")
 	}
-	log.Println("starting listener:", addressToListen)
-	listener, err := reuseport.Listen("tcp", addressToListen)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	go func(lstnr *net.Listener) {
+	log.Println("starting listener:", addressToListenString)
+
+	go func() {
+		listener, err := reuseport.Listen("tcp", addressToListenString)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println("started listener on", listener.Addr().String())
 		defer func(lstnr *net.Listener) {
 			if listener != nil {
 				err = listener.Close()
@@ -52,19 +54,17 @@ func StartP2P() {
 					log.Fatalln(err)
 				}
 			}
-		}(lstnr)
+		}(&listener)
 		for {
-			connectedPeer, err := (*lstnr).Accept()
+			connectedPeer, err := listener.Accept()
 			if err != nil {
 				log.Println("error getting new connection", err)
 				continue
 			}
 			log.Println("new client peer connected", connectedPeer.RemoteAddr().String())
 		}
-	}(&listener)
-	fmt.Println("started listener on", listener.Addr().String())
-	time.Sleep(time.Second)
-	peerConnection, err := reuseport.Dial("tcp", listener.Addr().String(), addresses[0])
+	}()
+	peerConnection, err := reuseport.Dial("tcp", addressToListen, addresses[0])
 	if err != nil {
 		log.Println("error connecting to peer", err)
 		return
