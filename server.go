@@ -42,6 +42,11 @@ func Serve() {
 			readBytesCount, readErr := conn.Read(oneByte)
 			if readErr == io.EOF {
 				log.Println("client", conn.RemoteAddr(), "disconnected")
+				for i, v := range clientsConnections {
+					if v == &conn {
+						clientsConnections = append(clientsConnections[:i], clientsConnections[i+1:]...)
+					}
+				}
 			}
 			log.Println("got", readBytesCount, "bytes from connection")
 		}()
