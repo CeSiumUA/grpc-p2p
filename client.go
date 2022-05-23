@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"strings"
+	"time"
 )
 
 func StartP2P() {
@@ -57,15 +58,18 @@ func StartP2P() {
 		}
 	}(&listener)
 	go func() {
-
-		log.Println("waiting for clients to accept...")
-		connectedPeer, err := listener.Accept()
-		if err != nil {
-			log.Println("error getting new connection", err)
+		for {
+			log.Println("waiting for clients to accept...")
+			connectedPeer, err := listener.Accept()
+			if err != nil {
+				log.Println("error getting new connection", err)
+				continue
+			}
+			log.Println("new client peer connected", connectedPeer.RemoteAddr().String())
 		}
-		log.Println("new client peer connected", connectedPeer.RemoteAddr().String())
 
 	}()
+	time.Sleep(100 * time.Millisecond)
 	log.Println("trying to dial to", addresses[0], "from:", addressToCallFrom)
 	peerConnection, err := reuseport.Dial("tcp", addressToCallFrom, addresses[0])
 	if err != nil {
