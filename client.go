@@ -39,14 +39,14 @@ func StartP2P() {
 	if err != nil {
 		log.Println("error closing connection")
 	}
-	log.Println("starting listener:", addressToListenString)
 
 	go func() {
+		log.Println("starting listener:", addressToListenString)
 		listener, err := reuseport.Listen("tcp", addressToListenString)
 		if err != nil {
 			log.Fatalln(err)
 		}
-		fmt.Println("started listener on", listener.Addr().String())
+		log.Println("started listener on", listener.Addr().String())
 		defer func(lstnr *net.Listener) {
 			if listener != nil {
 				err = listener.Close()
